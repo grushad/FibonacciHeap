@@ -47,7 +47,7 @@ class FibHeap:
         for c in node.children:
             c.flag = False
             c.parent = None
-            self.roots.add(c)
+            self.roots.append(c)
 
         degrees = {}        
         while len(self.roots) != 0:
