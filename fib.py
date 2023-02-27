@@ -24,8 +24,7 @@ class FibHeap:
     def __init__(self):
         # you may define any additional member variables you need
         self.roots = []
-        self.min = None
-        pass
+        self.min = None        
 
     def get_roots(self) -> list:
         return self.roots
@@ -36,19 +35,48 @@ class FibHeap:
             self.min = node
         self.roots.append(node)
         return node
+
+    def updateMin(self):
+        for node in self.roots:
+            if self.min is None or self.min.val > node.val:
+                self.min = node
+
+    def delete_min(self) -> None:           
+        node = self.min
+        self.roots.remove(node)
+        for c in node.children:
+            c.flag = False
+            c.parent = None
+            self.roots.add(c)
+
+        degrees = {}        
+        while len(self.roots) != 0:
+            node = self.roots.pop(0)
+            ind = len(node.children)
+            if ind not in degrees.keys() :
+                degrees[ind] = node
+            else:
+                node2 = degrees[ind]
+                if node.val < node2.val:
+                    node.children.append(node2)
+                    node2.parent = node 
+                    self.roots.append(node)
+                else:
+                    node2.children.append(node)
+                    node.parent = node2
+                    self.roots.append(node2)
+                degrees.pop(ind)          
+        for node in degrees.values():
+            self.roots.append(node)
+        self.min = None
+        self.updateMin()        
         
-    def delete_min(self) -> None:
-        pass
 
     def find_min(self) -> FibNode:
         return self.min
 
-    def updateMin(self):
-        for node in self.roots:
-            if node.val < self.min.val:
-                self.min = node
-
-    def promote(self, node:FibNode):
+    
+    def promote(self, node:FibNode) -> None:
         if node not in self.roots:
             par = node.parent
             par.children.remove(node)
